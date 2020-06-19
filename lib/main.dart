@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import './quiz.dart';
+import './result.dart';
 
 // dart programming language
 
@@ -11,23 +13,41 @@ class MyClass extends StatefulWidget {
 
 class _MyClassState extends State<MyClass> {
   int questionIndex = 0;
+  int score = 0;
 
   var questions = [
     {
       'questText': 'What\'s your favourite color?',
-      'anwsers': ['Red', 'Green', 'Blue', 'Black']
+      'anwsers': [
+        {'text': 'Red', 'score': 4},
+        {'text': 'Green', 'score': 5},
+        {'text': 'Blue', 'score': 9},
+        {'text': 'Black', 'score': 3}
+      ]
     },
     {
       'questText': 'What\'s your favourite animal?',
-      'anwsers': ['Cat', 'Dog', 'Rabbit']
+      'anwsers': [
+        {'text': 'Cat', 'score': 6},
+        {'text': 'Dog', 'score': 1},
+        {'text': 'Rabbit', 'score': 6}
+      ]
     },
   ];
 
-  answerQuestion() {
+  answerQuestion(int score) {
     setState(() {
       questionIndex = questionIndex + 1;
+      this.score = this.score + score;
     });
-    print(questionIndex);
+    print(this.score);
+  }
+
+  resetQuestion() {
+    setState(() {
+      questionIndex = 0;
+      score = 0;
+    });
   }
 
   @override
@@ -39,30 +59,16 @@ class _MyClassState extends State<MyClass> {
             title: Text('My App'),
           ),
           body: Container(
-            child: Column(
-              children: [
-                Text(
-                  questions[questionIndex]['questText'],
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
+            child: questionIndex < questions.length
+                ? Quiz(
+                    questions: questions,
+                    questionIndex: questionIndex,
+                    answerQuestion: answerQuestion,
+                  )
+                : Result(
+                    score: score,
+                    resetQuestion: resetQuestion,
                   ),
-                ),
-                ...(questions[questionIndex]['anwsers'] as List<String>)
-                    .map((text) {
-                  return Container(
-                    child: RaisedButton(
-                      onPressed: answerQuestion,
-                      child: Text(text),
-                      color: Colors.blue,
-                      textColor: Colors.white,
-                    ),
-                    width: double.infinity,
-                    margin: EdgeInsets.only(left: 10, right: 10),
-                  );
-                }),
-              ],
-            ),
             width: double.infinity,
             alignment: Alignment.topCenter,
           )),
